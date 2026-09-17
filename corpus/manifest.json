@@ -1,0 +1,95 @@
+{
+  "corpus_id": "tiger-den-pilot-001",
+  "status": "proposed",
+  "purpose": "Define the exact, reproducible terrain for Tiger Den's first bounded corpus experiment.",
+  "survey_date": "2026-09-17",
+  "discovery_method": "To be defined before empirical survey begins.",
+  "coverage_limitations": [
+    "This is a small pilot corpus, not a census of software.",
+    "The selected source scopes are intentionally bounded.",
+    "Primitive coverage and equivalence claims will be limited to the surveyed material."
+  ],
+  "projects": [
+    {
+      "name": "zlib",
+      "canonical_location": "https://github.com/madler/zlib",
+      "source_identity": {
+        "type": "release",
+        "value": "v1.3.2",
+        "immutable_reference": "v1.3.2"
+      },
+      "license": {
+        "identifier": "Zlib",
+        "source_location": "README"
+      },
+      "languages": ["C"],
+      "platforms": ["Unix", "Windows", "VMS"],
+      "scope": "Project source and documented test/example material relevant to externally meaningful compression capabilities.",
+      "inclusion_rationale": "Mature, well-documented compression implementation providing a clear reference point for compression capabilities and contracts.",
+      "exclusions": ["No assumption that every helper or internal routine is a primitive."],
+      "status": "pinned"
+    },
+    {
+      "name": "Zstandard",
+      "canonical_location": "https://github.com/facebook/zstd",
+      "source_identity": {
+        "type": "release",
+        "value": "v1.5.7",
+        "immutable_reference": "v1.5.7"
+      },
+      "license": {
+        "identifier": "BSD-3-Clause",
+        "source_location": "LICENSE"
+      },
+      "languages": ["C"],
+      "platforms": ["Multiple; exact survey platforms to be recorded during empirical survey."],
+      "scope": "Project source relevant to compression/decompression capabilities; survey will not assume all project machinery is primitive-level material.",
+      "inclusion_rationale": "Provides a distinct compression implementation overlapping zlib at the broad capability level while using materially different algorithms and implementation choices.",
+      "exclusions": ["Project-specific tooling and wrappers are not automatically primitive candidates."],
+      "status": "pinned"
+    },
+    {
+      "name": "LibYAML",
+      "canonical_location": "https://github.com/yaml/libyaml",
+      "source_identity": {
+        "type": "release",
+        "value": "0.2.5",
+        "immutable_reference": "0.2.5"
+      },
+      "license": {
+        "identifier": "MIT",
+        "source_location": "License"
+      },
+      "languages": ["C"],
+      "platforms": ["Multiple; exact survey platforms to be recorded during empirical survey."],
+      "scope": "Stable 0.2.5 source relevant to YAML parsing, scanning/tokenization, representation, and serialization capabilities.",
+      "inclusion_rationale": "Provides a mature parsing/serialization domain and a useful contrast with compression-focused projects.",
+      "exclusions": ["The 0.2.6-rc.1 prerelease is excluded from Pilot 001 unless a later research decision changes the pinned terrain."],
+      "status": "pinned"
+    },
+    {
+      "name": "SQLite",
+      "canonical_location": "https://github.com/sqlite/sqlite",
+      "source_identity": {
+        "type": "version",
+        "value": "3.54.0",
+        "immutable_reference": "3.54.0"
+      },
+      "license": {
+        "identifier": "Public Domain for primary SQLite code; repository contains separately licensed build/configuration material",
+        "source_location": "LICENSE.md"
+      },
+      "languages": ["C", "Tcl and other project/build languages as encountered within the bounded survey scope"],
+      "platforms": ["Multiple"],
+      "scope": "Controlled subsystem survey only. Focus on externally meaningful computational capabilities relevant to parsing, data structures, searching/sorting, hashing, serialization, and related fundamental operations. The repository as a whole is not treated as uniformly in scope.",
+      "inclusion_rationale": "Provides a substantially larger and more heterogeneous codebase, allowing the pilot to test scope boundaries and distinguish reusable computational capabilities from project-specific database machinery.",
+      "exclusions": ["No universal survey of the repository.", "No assumption that SQLite's database engine architecture constitutes a set of standalone primitives without evidence.", "Build/configuration machinery is excluded unless specifically justified by the research record."],
+      "status": "pinned-with-controlled-scope"
+    }
+  ],
+  "pinning_notes": [
+    "The corpus is not considered empirically surveyed merely because these source identities have been selected.",
+    "Exact source identities and scope boundaries are recorded here before empirical analysis.",
+    "Any corpus change requires a documented research decision rather than silently replacing existing terrain."
+  ]
+}

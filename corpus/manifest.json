@@ -15,8 +15,9 @@
       "canonical_location": "https://github.com/madler/zlib",
       "source_identity": {
         "type": "release",
-        "value": "v1.3.2",
-        "immutable_reference": "v1.3.2"
+        "release_or_tag": "v1.3.2",
+        "immutable_reference": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+        "immutable_reference_type": "Git commit SHA"
       },
       "license": {
         "identifier": "Zlib",
@@ -34,8 +35,9 @@
       "canonical_location": "https://github.com/facebook/zstd",
       "source_identity": {
         "type": "release",
-        "value": "v1.5.7",
-        "immutable_reference": "v1.5.7"
+        "release_or_tag": "v1.5.7",
+        "immutable_reference": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+        "immutable_reference_type": "Git commit SHA"
       },
       "license": {
         "identifier": "BSD-3-Clause",
@@ -53,8 +55,9 @@
       "canonical_location": "https://github.com/yaml/libyaml",
       "source_identity": {
         "type": "release",
-        "value": "0.2.5",
-        "immutable_reference": "0.2.5"
+        "release_or_tag": "0.2.5",
+        "immutable_reference": "2c891fc7a770e8ba2fec34fc6b545c672beb37e6",
+        "immutable_reference_type": "Git commit SHA"
       },
       "license": {
         "identifier": "MIT",
@@ -71,9 +74,11 @@
       "name": "SQLite",
       "canonical_location": "https://github.com/sqlite/sqlite",
       "source_identity": {
-        "type": "version",
-        "value": "3.54.0",
-        "immutable_reference": "3.54.0"
+        "type": "release",
+        "release_or_tag": "version-3.53.4",
+        "immutable_reference": "b09c88c14082339b66c7b7158d609a771e64ca69",
+        "immutable_reference_type": "Git commit SHA",
+        "upstream_source_id": "2026-07-24 19:02:57 bf7c7f30031888f4e796e429ab3978879485813aaca6f641c7b33e4e09459bcc"
       },
       "license": {
         "identifier": "Public Domain for primary SQLite code; repository contains separately licensed build/configuration material",
@@ -83,13 +88,18 @@
       "platforms": ["Multiple"],
       "scope": "Controlled subsystem survey only. Focus on externally meaningful computational capabilities relevant to parsing, data structures, searching/sorting, hashing, serialization, and related fundamental operations. The repository as a whole is not treated as uniformly in scope.",
       "inclusion_rationale": "Provides a substantially larger and more heterogeneous codebase, allowing the pilot to test scope boundaries and distinguish reusable computational capabilities from project-specific database machinery.",
-      "exclusions": ["No universal survey of the repository.", "No assumption that SQLite's database engine architecture constitutes a set of standalone primitives without evidence.", "Build/configuration machinery is excluded unless specifically justified by the research record."],
+      "exclusions": [
+        "No universal survey of the repository.",
+        "No assumption that SQLite's database engine architecture constitutes a set of standalone primitives without evidence.",
+        "Build/configuration machinery is excluded unless specifically justified by the research record."
+      ],
       "status": "pinned-with-controlled-scope"
     }
   ],
   "pinning_notes": [
     "The corpus is not considered empirically surveyed merely because these source identities have been selected.",
     "Exact source identities and scope boundaries are recorded here before empirical analysis.",
+    "For SQLite, the Git mirror's immutable commit SHA is recorded alongside SQLite's official Fossil source ID because the GitHub repository is an official mirror rather than the authoritative Fossil repository.",
     "Any corpus change requires a documented research decision rather than silently replacing existing terrain."
   ]
 }

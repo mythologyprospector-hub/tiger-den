@@ -49,6 +49,88 @@ The project should begin with small, controlled corpora. Early machinery should 
 
 The first useful milestone is not a giant catalog. It is a demonstrably reproducible survey pipeline that can take a known corpus and produce useful candidate primitive records.
 
+## Pilot 001 — Discovery Pass Notes
+
+The first pinned-source discovery pass has now begun against the immutable references recorded in `corpus/manifest.json`. Search results from repository default branches are not being treated as evidence for pinned historical sources; source-level observations are being taken from the pinned commits themselves.
+
+### zlib v1.3.2
+
+The pinned `zlib.h` explicitly defines a stream-oriented compression/decompression interface and documents its buffer, progress, error, format, and initialization contracts.
+
+Observed candidate capability areas:
+
+- streaming compression via `deflate()`;
+- streaming decompression via `inflate()`;
+- one-step in-memory compression/decompression;
+- Adler-32 and CRC-32 integrity calculations;
+- raw DEFLATE, zlib-wrapped DEFLATE, and gzip-wrapped DEFLATE handling;
+- compression configuration through level, window, memory, and strategy parameters;
+- preset dictionary support.
+
+Important observation: these are candidate capability areas, not yet asserted primitive identities. The header itself demonstrates that "compression" contains materially different contracts and operating modes.
+
+The pinned header also states that the decoder checks compressed-data consistency and is intended not to crash on corrupted input. This is evidence of a documented behavioral property, not yet an independently verified property.
+
+### Zstandard v1.5.7
+
+The pinned `lib/zstd.h` explicitly describes:
+
+- simple single-step compression/decompression;
+- reusable compression contexts;
+- streaming compression;
+- dictionary-based compression;
+- frame-content-size inspection;
+- compressed-frame boundary discovery;
+- configurable compression levels, including negative levels and high-memory levels.
+
+The source-level implementation also contains distinct compression/decompression machinery, including match-state structures and decompression window/dictionary handling.
+
+Important distinction: zlib and Zstandard overlap at the broad capability level but their documented contracts and format/algorithm constraints differ. No equivalence claim is made merely from both being compression libraries.
+
+**Provenance/legal note:** the pinned Zstandard header states that the source is licensed under both the BSD-style license in `LICENSE` and GPLv2 in `COPYING`, with the user selecting one of those licenses. The corpus manifest's license field currently records BSD-3-Clause from `LICENSE`; that is incomplete as a description of the licensing notice and should be reconciled before the manifest is treated as final legal metadata.
+
+### LibYAML 0.2.5
+
+Pinned scanner/parser/emitter source provides a particularly clear layered pipeline:
+
+```
+input stream → tokens → parser events → serialized output
+```
+
+Observed candidate capability areas include:
+
+- lexical scanning/tokenization into YAML tokens;
+- syntactic parsing from tokens into events;
+- event-based representation of YAML structures;
+- emission/serialization of events into YAML output.
+
+These are useful candidates because the source documentation exposes the boundaries between layers instead of requiring Tiger Den to infer them solely from names.
+
+### SQLite 3.53.4
+
+The pinned `src/tokenize.c` contains a character-classification table and `sqlite3GetToken()`, whose documented role is to determine token length and token type.
+
+Observed candidate capability area:
+
+- SQL lexical tokenization / token classification.
+
+This is deliberately treated as a low-level candidate inside a much larger system. The existence of reusable computational machinery inside a project does not make the surrounding application architecture a primitive.
+
+### Current Research State
+
+At this checkpoint:
+
+- corpus identities are pinned;
+- empirical discovery has begun;
+- raw source observations have been captured;
+- candidate capability areas are emerging;
+- primitive identity has not yet been declared for these observations;
+- cross-project equivalence has not been declared;
+- provenance and licensing details remain part of the research record;
+- the map's persistent record format is still intentionally unfrozen.
+
+The next research step is to extract candidate records with explicit separation between observation, interpretation, and primitive identity, without prematurely freezing a storage schema.
+
 ## Open Questions
 
 These questions are intentionally unresolved until evidence or experimentation provides an answer:

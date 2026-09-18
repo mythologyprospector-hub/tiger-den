@@ -145,3 +145,56 @@ These questions are intentionally unresolved until evidence or experimentation p
 - How should the map represent uncertainty and competing classifications?
 
 These are research questions, not invitations to guess.
+
+
+## Pilot 001 — Preliminary Candidate Extraction
+
+Candidate extraction is now separated from primitive declaration.
+
+The current observations support the following **candidate capability families** for further characterization:
+
+**Compression/decompression.** zlib and Zstandard both expose externally meaningful compression and decompression operations, but their contracts, stream formats, tuning parameters, framing, and auxiliary capabilities differ. The correct current relationship is **overlapping capability domain / separate implementations under investigation**, not "same primitive" and not "different primitives" as a settled fact.
+
+**Integrity checksums.** zlib exposes Adler-32 and CRC-32 operations as distinct documented interfaces. These are sufficiently concrete to proceed as separate candidate capabilities for contract characterization. No claim is yet made that either is a final primitive record.
+
+**Lexical tokenization.** LibYAML's scanner and SQLite's tokenizer both expose a recognizable transformation from input characters/bytes toward typed lexical units. Their language grammars, token contracts, state requirements, and output representations differ substantially. This makes them useful cross-domain candidates for testing whether Tiger Den can recognize a common computational shape without incorrectly declaring semantic equivalence.
+
+**Syntactic parsing.** LibYAML's parser consumes tokens and produces parser events. This is a candidate parsing capability with an unusually explicit source-level contract and therefore a strong target for characterization.
+
+**Serialization/emission.** LibYAML's emitter converts parser events into YAML output under documented buffering and output rules. It is a candidate serialization/emission capability, but its YAML-specific contract must remain attached to the candidate rather than being generalized prematurely into a universal "serializer" primitive.
+
+**Format/frame inspection.** Zstandard exposes operations for determining frame content size and locating the compressed size of a frame. These are candidates for characterization as metadata/format-inspection operations rather than being folded into the compression operation merely because they live in the same library.
+
+**Dictionary-assisted compression.** Both the zlib and Zstandard evidence show dictionary-related compression interfaces. This is a promising comparison target, but the dictionaries, format semantics, initialization requirements, and implementation behavior must be characterized before any relationship is asserted.
+
+### Classification discipline
+
+These candidate families are deliberately at different levels of abstraction. That is useful terrain rather than a defect.
+
+The next characterization pass should test each candidate against a common set of questions:
+
+1. What are the inputs and outputs?
+2. What preconditions and postconditions are documented?
+3. What failures are part of the contract?
+4. What state is required across calls?
+5. What side effects or resource requirements matter?
+6. What observable properties distinguish this candidate from nearby capabilities?
+7. Which claims are directly observed, which are derived from source evidence, and which remain interpretation?
+8. What exact source locator makes the evidence reproducible?
+
+No candidate is promoted to an established primitive by naming similarity, API similarity, or co-location in a library.
+
+## Current Research State
+
+At this checkpoint:
+
+- corpus identities are pinned;
+- empirical discovery has begun;
+- raw source observations have been captured;
+- candidate capability families have been extracted;
+- primitive identity has not yet been declared for these observations;
+- cross-project equivalence has not been declared;
+- provenance and licensing details remain part of the research record;
+- the map's persistent record format is still intentionally unfrozen.
+
+The next research step is characterization of selected candidates against their explicit contracts and observable behavior, without prematurely freezing a storage schema.

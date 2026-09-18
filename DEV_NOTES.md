@@ -198,3 +198,108 @@ At this checkpoint:
 - the map's persistent record format is still intentionally unfrozen.
 
 The next research step is characterization of selected candidates against their explicit contracts and observable behavior, without prematurely freezing a storage schema.
+
+
+## Pilot 001 — Contract Characterization Pass
+
+A first characterization pass was performed against pinned source files. This pass records what the source establishes about candidate contracts; it does not promote candidates to final primitive identities.
+
+### Characterized candidate: zlib streaming decompression
+
+**Observation:** `inflate()` accepts a mutable stream state containing input/output pointers and available byte counts, processes as much input/output as possible, and is intended to be called repeatedly until stream completion or error.
+
+**Inputs:** compressed input bytes plus caller-managed output space and stream state; the caller must maintain the `next_*` and `avail_*` fields as buffers are consumed/refilled.
+
+**Outputs:** decompressed bytes in caller-provided output storage; updated stream position/count state; a return status describing progress, completion, or failure.
+
+**State requirement:** yes. The documented operation is explicitly stream-stateful across calls.
+
+**Failure contract:** documented statuses distinguish malformed/corrupt input, inconsistent stream state, memory exhaustion, missing dictionary, and lack of progress/output space.
+
+**Format scope:** zlib and gzip wrapped DEFLATE are supported by the documented interface, with raw DEFLATE also available through the initialization interface.
+
+**Interpretation:** this is stronger evidence for a distinct *streaming decompression capability* than for a generic decompression primitive. Buffer protocol, stream state, framing, checksums, and error semantics are part of the contract and must not be discarded during normalization.
+
+**Status:** candidate characterized; not promoted.
+
+### Characterized candidate: Zstandard frame content-size inspection
+
+**Observation:** `ZSTD_getFrameContentSize()` examines the beginning of a Zstandard frame and returns either a known decompressed content size, an explicit unknown sentinel, or an error sentinel.
+
+**Inputs:** pointer to frame bytes and available byte count; the source requires enough bytes for the frame header.
+
+**Outputs:** a size value with distinct meanings for known size, unknown size, and malformed/insufficient input.
+
+**State requirement:** none is documented for this operation.
+
+**Failure/uncertainty contract:** unknown content size is deliberately different from an error. The source also warns that an untrusted source can contain an incorrect or intentionally modified size and that callers must enforce their own authorized limits.
+
+**Interpretation:** this is evidence for a format-metadata inspection capability separate from decompression itself. It also demonstrates that "returns a number" is insufficient to describe a contract; sentinel meanings and trust boundaries matter.
+
+**Status:** candidate characterized; not promoted.
+
+### Characterized candidate: LibYAML lexical scanning
+
+**Observation:** `src/scanner.c` explicitly defines scanning as transforming an input stream into a sequence of typed tokens. The source enumerates stream/document boundaries, collection delimiters, keys/values, aliases, anchors, tags, and scalar tokens.
+
+**Inputs:** YAML input stream handled by the scanner state.
+
+**Outputs:** ordered typed token sequence consumed by the parser.
+
+**State requirement:** yes. The scanner maintains parsing/scanning state while recognizing YAML constructs, including indentation and simple-key handling.
+
+**Failure/uncertainty contract:** the source describes scanner-specific complexity and the broader library has explicit error machinery; exact error cases require a deeper API-level characterization before making a generalized robustness claim.
+
+**Interpretation:** this is a well-bounded lexical-analysis candidate whose output contract is materially richer than "split text into words." YAML token types, stream structure, indentation semantics, anchors, tags, and scalar styles are part of the observed contract.
+
+**Status:** candidate characterized; not promoted.
+
+### Characterized candidate: LibYAML syntactic parsing
+
+**Observation:** `src/parser.c` publishes a grammar mapping token sequences into parser events and exposes `yaml_parser_parse()` as the public entry point. The grammar distinguishes implicit/explicit documents, block/flow collections, mappings, sequences, aliases, properties, and scalars.
+
+**Inputs:** scanner-produced token stream through parser state.
+
+**Outputs:** ordered YAML parsing events.
+
+**State requirement:** yes. The parser maintains a token queue and state machine while producing events.
+
+**Contract distinction:** the event stream is not simply a generic AST. It is a YAML-specific event representation whose structure follows the documented grammar.
+
+**Interpretation:** this provides strong evidence for a parsing capability with a precisely observable boundary. Generalizing it to a universal parser primitive would require preserving the language grammar and output representation as part of the contract.
+
+**Status:** candidate characterized; not promoted.
+
+### Characterized candidate: SQLite lexical tokenization
+
+**Observation:** `src/tokenize.c` defines character classes and `sqlite3GetToken()` logic for splitting SQL input into tokens. The implementation handles operators, comments, quoted strings/identifiers, numeric forms, identifiers, variables, and illegal characters. The source explicitly states that the lookup-table classification is chosen for speed.
+
+**Inputs:** SQL input characters/bytes at the current scan position.
+
+**Outputs:** token type plus token length, allowing the caller to advance through the input.
+
+**State requirement:** the core token operation is position-based and does not require a general parser state object merely to classify the next token; broader SQLite tokenization behavior also depends on surrounding compilation configuration and generated keyword data.
+
+**Observable property:** the source documents an intentional performance mechanism: character classification through a lookup table rather than direct switching on character values.
+
+**Interpretation:** this is a strong candidate for a lexical token-recognition operation, but its SQL-specific token vocabulary and SQLite compatibility behavior must remain explicit.
+
+**Status:** candidate characterized; not promoted.
+
+### Cross-candidate finding
+
+The characterization pass exposes a useful pattern for Tiger Den: candidates can share a computational shape without sharing a primitive contract. LibYAML scanning and SQLite tokenization both recognize lexical units, yet their token vocabularies, grammar assumptions, state models, and outputs differ. Likewise, zlib and Zstandard both compress/decompress data, while their framing and operational contracts differ.
+
+The map therefore needs to preserve both **capability shape** and **contract-specific identity**. A future relationship record may say that two implementations occupy an overlapping capability domain without asserting semantic equivalence.
+
+## Current Research State
+
+At this checkpoint:
+
+- corpus identities are pinned;
+- discovery and preliminary candidate extraction are complete for the current pass;
+- selected candidates have been contract-characterized from pinned source;
+- no candidate has been promoted to an established primitive solely from source naming or broad functional similarity;
+- cross-project equivalence remains unasserted;
+- licensing/provenance reconciliation remains open for Zstandard;
+- persistent map serialization remains intentionally unfrozen.
